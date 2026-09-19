@@ -106,12 +106,18 @@ async function readJson(req: IncomingMessage): Promise<unknown> {
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 }
 
-function sendJson(res: ServerResponse, status: number, body: unknown): void {
+function sendJson(
+  res: ServerResponse,
+  status: number,
+  body: unknown,
+  headers: Record<string, string> = {}
+): void {
   if (res.headersSent) return;
   const text = JSON.stringify(body);
   res.writeHead(status, {
     "content-type": "application/json",
-    "content-length": Buffer.byteLength(text)
+    "content-length": String(Buffer.byteLength(text)),
+    ...headers
   });
   res.end(text);
 }
